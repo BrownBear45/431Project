@@ -1,0 +1,38 @@
+
+11) inserting value in userProfile and ProductReview:
+BEGIN; 
+
+-- assign variables with whatever user wants to insert
+DECLARE @Username VARCHAR(255) = 'newuser';
+DECLARE @Gender VARCHAR(255) = 'Male';
+DECLARE @Email VARCHAR(255) = 'newuser@example.com';
+DECLARE @Password VARCHAR(255) = 'password123';
+DECLARE @Bio TEXT = 'This is a bio.';
+DECLARE @Permlevel INT = 1;
+DECLARE @DOB DATE = '1990-01-15';
+DECLARE @LName VARCHAR(255) = 'Smith';
+DECLARE @FName VARCHAR(255) = 'John';
+DECLARE @Phone_Number VARCHAR(255) = '123-456-7890';
+DECLARE @ProductID INT = 1;
+DECLARE @ProdVidOrPicID INT = 1234;
+DECLARE @PRComments TEXT = 'Great product!';
+DECLARE @PRDescription TEXT = 'This is a detailed review.';
+DECLARE @PRLikes INT = 5;
+
+-- Check if any of the variables are NULL, and if so, roll back the transaction
+IF NULL IN (@Username, @Gender, @Email, @Password, @Bio, @Permlevel, @DOB, @LName, @FName, @Phone_Number, @ProductID, @ProdVidOrPicID, @PRComments, @PRDescription, @PRLikes) THEN
+    ROLLBACK;
+ELSE
+    -- Insert a new user profile
+    INSERT INTO UserProfile (Username, Gender, Email, Password, Bio, Permlevel, DOB, LName, FName, Phone_Number)
+    VALUES (@Username, @Gender, @Email, @Password, @Bio, @Permlevel, @DOB, @LName, @FName, @Phone_Number);
+
+    -- Insert a new product review
+    INSERT INTO ProductReview (ProductID, Username, ProdVidOrPicID, PRComments, PRCreatedAt, PRDescription, PRLikes)
+    VALUES (@ProductID, @Username, @ProdVidOrPicID, @PRComments, NOW(), @PRDescription, @PRLikes);
+
+    -- If both inserts are successful, commit the transaction
+    COMMIT;
+END IF;
+
+
